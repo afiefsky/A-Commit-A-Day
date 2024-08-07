@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Voting Web</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        h1, h2, p {
+            color: #000000;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-color: #333333;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <h1>Vote for Your Favorite Option</h1>
+        <div class="card bg-dark text-white mt-4 mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <button class="btn btn-primary m-2" onclick="vote('Option 1')">Option 1</button>
+                <button class="btn btn-secondary m-2" onclick="vote('Option 2')">Option 2</button>
+                <button class="btn btn-success m-2" onclick="vote('Option 3')">Option 3</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h2>Results</h2>
+            <p id="result">No votes yet</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function vote(option) {
+            document.getElementById('result').innerText = `You voted for: ${option}`;
+        }
+    </script>
+</body>
+</html>
