@@ -35,7 +35,7 @@
         <div class="container mt-5">
             <h2>HTML Popup Modal Example</h2>
             <!-- Trigger/Open The Modal -->
-            <button id="myBtn" class="btn btn-primary">Open Modal</button>
+            <button id="myBtn" class="btn btn-primary" onclick="openModal()">Open Modal</button>
         </div>
 
         <!-- The Modal -->
@@ -59,13 +59,13 @@
         </div>
 
         <!-- Bootstrap JS, Popper.js, and jQuery -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
         <script>
-            // When the user clicks the button, open the modal
-            document.getElementById('myBtn').onclick = function() {
+            // Function to open the modal
+            function openModal() {
                 $('#myModal').modal('show');
             }
         </script>
