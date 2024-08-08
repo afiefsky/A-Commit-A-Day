@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        #video-container {
+            width: 640px;
+            height: 360px;
+            margin-bottom: 20px;
+        }
+        #video-container video {
+            width: 100%;
+            height: 100%;
+        }
+        #controls {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Video Player</h1>
+    <div id="video-container">
+        <video id="current-video" controls>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div id="controls">
+        <button id="play-button">Play</button>
+        <button id="pause-button">Pause</button>
+        <button id="stop-button">Stop</button>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('current-video');
+        const playButton = document.getElementById('play-button');
+        const pauseButton = document.getElementById('pause-button');
+        const stopButton = document.getElementById('stop-button');
+
+        playButton.addEventListener('click', () => {
+            videoElement.play();
+        });
+
+        pauseButton.addEventListener('click', () => {
+            videoElement.pause();
+        });
+
+        stopButton.addEventListener('click', () => {
+            videoElement.pause();
+            videoElement.currentTime = 0;
+        });
+    </script>
+</body>
+</html>
