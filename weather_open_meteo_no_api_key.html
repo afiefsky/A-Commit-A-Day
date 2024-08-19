@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Based on Location</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40; /* Dark background */
+            color: #ffffff; /* Light text color */
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            background-color: #495057; /* Darker card background */
+            border-color: #6c757d; /* Card border color */
+        }
+        .card-header {
+            background-color: #6c757d; /* Header background color */
+            color: #ffffff; /* Header text color */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border-color: #007bff; /* Primary button border color */
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">Current Weather</h1>
+            </div>
+            <div class="card-body">
+                <p id="location" class="card-text">Getting your location...</p>
+                <p id="weather" class="card-text">Fetching weather data...</p>
+            </div>
+            <div class="card-footer text-center">
+                <button id="refresh" class="btn btn-primary">Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function getWeather(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+
+                $('#location').text("Latitude: " + lat + ", Longitude: " + lon);
+
+                var openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode`;
+
+                $.getJSON(openMeteoUrl)
+                    .done(function(data) {
+                        if (data.hourly && data.hourly.temperature_2m) {
+                            var temp = data.hourly.temperature_2m[0];
+                            var weatherCode = data.hourly.weathercode[0];
+                            var weatherDescription = getWeatherDescription(weatherCode);
+                            var weather = `Temperature: ${temp}°C, Condition: ${weatherDescription}`;
+
+                            $('#weather').text(weather);
+                        } else {
+                            $('#weather').text("Weather data not available.");
+                        }
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        $('#weather').text("Unable to fetch weather data: " + textStatus + " - " + errorThrown);
+                    });
+            }
+
+            function getWeatherDescription(weatherCode) {
+                switch (weatherCode) {
+                    case 0: return "Clear sky";
+                    case 1: return "Mainly clear";
+                    case 2: return "Partly cloudy";
+                    case 3: return "Overcast";
+                    case 45: return "Fog";
+                    case 51: return "Light rain showers";
+                    case 61: return "Showers of rain";
+                    case 71: return "Light snow showers";
+                    case 81: return "Snow showers";
+                    default: return "Unknown weather";
+                }
+            }
+
+            function showError(error) {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        $('#location').text("User denied the request for Geolocation.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        $('#location').text("Location information is unavailable.");
+                        break;
+                    case error.TIMEOUT:
+                        $('#location').text("The request to get user location timed out.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        $('#location').text("An unknown error occurred.");
+                        break;
+                }
+            }
+
+            // Initial load
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(getWeather, showError);
+            } else {
+                $('#location').text("Geolocation is not supported by this browser.");
+            }
+
+            // Refresh button
+            $('#refresh').click(function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(getWeather, showError);
+                } else {
+                    $('#location').text("Geolocation is not supported by this browser.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
