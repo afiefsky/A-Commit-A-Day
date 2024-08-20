@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Directory Listing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,11 +55,7 @@
             text-decoration: underline;
         }
 
-        .folder-icon {
-            margin-right: 10px;
-        }
-
-        .file-icon {
+        .fa-folder, .fa-file, .fa-html5, .fa-php, .fa-file-alt, .fa-js-square {
             margin-right: 10px;
         }
     </style>
@@ -95,17 +92,32 @@
                 // Get the directory list of the current folder
                 $directoryList = getDirectoryList(__DIR__);
 
-                // Icons for folders and files
+                // Icons for folders and specific file types using FontAwesome
                 $icons = [
-                    'directory' => '📁',
-                    'file' => '📄'
+                    'directory' => 'fas fa-folder',           // Folder icon
+                    'file' => 'fas fa-file',                  // Default file icon
+                    'html' => 'fab fa-html5',                 // HTML file icon
+                    'php' => 'fab fa-php',                    // PHP file icon
+                    'md' => 'fas fa-file-alt',                // Markdown file icon
+                    'js' => 'fab fa-js-square',               // JavaScript file icon
                 ];
 
                 // Render the directory list
                 foreach ($directoryList as $item) {
+                    $iconClass = $icons['file'];  // Default to file icon
+                    
+                    if ($item['type'] === 'directory') {
+                        $iconClass = $icons['directory'];
+                    } else {
+                        $ext = pathinfo($item['name'], PATHINFO_EXTENSION);
+                        if (array_key_exists($ext, $icons)) {
+                            $iconClass = $icons[$ext];
+                        }
+                    }
+                    
                     echo '<li>';
                     echo '<a href="' . $item['url'] . '">';
-                    echo '<span class="' . $item['type'] . '-icon">' . $icons[$item['type']] . '</span>';
+                    echo '<i class="' . $iconClass . '"></i> ';  // FontAwesome icon
                     echo $item['name'];
                     echo '</a>';
                     echo '</li>';
