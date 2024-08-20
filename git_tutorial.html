@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Flow Tutorial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode p, .dark-mode ol, .dark-mode ul, .dark-mode code {
+            color: #e0e0e0;
+        }
+
+        .btn-dark-mode {
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+
+        .btn-dark-mode.dark-mode {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .dark-mode pre {
+            background-color: #343a40;
+        }
+
+        code {
+            color: #d63384;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Git Flow Tutorial</h1>
+            <button id="darkModeToggle" class="btn btn-primary dark-mode">Toggle Light Mode</button>
+        </div>
+
+        <div class="mt-4">
+            <h2>What is Git Flow?</h2>
+            <p>Git Flow is a branching model for Git that helps manage feature development and release processes. It standardizes workflows and makes collaboration easier in large projects.</p>
+        </div>
+
+        <div class="mt-4">
+            <h3>Git Flow Steps</h3>
+            <ol>
+                <li><strong>Initialize Git Flow:</strong> Start by initializing Git Flow in your repository.
+                    <pre><code>git flow init</code></pre>
+                </li>
+                <li><strong>Start a Feature:</strong> Create a new feature branch.
+                    <pre><code>git flow feature start feature-name</code></pre>
+                </li>
+                <li><strong>Finish a Feature:</strong> Merge the feature branch back into the development branch.
+                    <pre><code>git flow feature finish feature-name</code></pre>
+                </li>
+                <li><strong>Start a Release:</strong> Create a release branch from the development branch.
+                    <pre><code>git flow release start release-name</code></pre>
+                </li>
+                <li><strong>Finish a Release:</strong> Merge the release branch into both the main and development branches, and tag the release.
+                    <pre><code>git flow release finish release-name</code></pre>
+                </li>
+                <li><strong>Hotfix:</strong> Create a hotfix branch to quickly address issues in production.
+                    <pre><code>git flow hotfix start hotfix-name</code></pre>
+                </li>
+            </ol>
+        </div>
+
+        <div class="mt-4">
+            <h3>Benefits of Git Flow</h3>
+            <ul>
+                <li>Standardized workflow across teams</li>
+                <li>Clear separation of different types of work</li>
+                <li>Easy management of releases and hotfixes</li>
+                <li>Better collaboration and code quality</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('dark-mode');
+            darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
