@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Catalogue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .catalogue {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode .product {
+            background-color: #444;
+            border-color: #555;
+        }
+
+        .dark-mode .price {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+    <div class="container">
+        <header class="text-center my-4">
+            <h1>Coffee Catalogue</h1>
+            <button id="darkModeToggle" class="btn btn-secondary mt-3">Toggle Dark Mode</button>
+        </header>
+        <div class="catalogue row">
+            <div class="product col-md-4">
+                <img src="https://via.placeholder.com/250x150?text=Espresso" alt="Espresso">
+                <h2>Espresso</h2>
+                <p>Rich and bold espresso with a thick crema.</p>
+                <p class="price">$3.00</p>
+            </div>
+            <div class="product col-md-4">
+                <img src="https://via.placeholder.com/250x150?text=Latte" alt="Latte">
+                <h2>Latte</h2>
+                <p>Smooth blend of espresso and steamed milk.</p>
+                <p class="price">$4.00</p>
+            </div>
+            <div class="product col-md-4">
+                <img src="https://via.placeholder.com/250x150?text=Cappuccino" alt="Cappuccino">
+                <h2>Cappuccino</h2>
+                <p>Perfect balance of espresso, steamed milk, and foam.</p>
+                <p class="price">$4.50</p>
+            </div>
+            <div class="product col-md-4">
+                <img src="https://via.placeholder.com/250x150?text=Mocha" alt="Mocha">
+                <h2>Mocha</h2>
+                <p>Delicious blend of espresso, chocolate, and milk.</p>
+                <p class="price">$5.00</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('bg-light', 'text-dark');
+                body.classList.add('bg-dark', 'text-light');
+            } else {
+                body.classList.remove('bg-dark', 'text-light');
+                body.classList.add('bg-light', 'text-dark');
+            }
+        });
+    </script>
+</body>
+</html>
