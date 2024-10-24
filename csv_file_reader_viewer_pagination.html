@@ -1,0 +1,269 @@
+<!-- CSV Loader, tested that this able to load csv file with 2 million rows -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV Reader with Pagination</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      transition: background-color 0.5s, color 0.5s;
+    }
+    .dark-mode {
+      background-color: #282a36; /* Background color */
+      color: #f8f8f2; /* Text color */
+    }
+    .table-container {
+      margin-top: 20px;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+    }
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+    .progress {
+      margin-top: 20px;
+      display: none; /* Hidden by default */
+    }
+    .progress-bar {
+      transition: width 0.4s ease; /* Smooth transition for progress */
+      position: relative;
+    }
+    .progress-bar span {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: white; /* Change text color for visibility */
+      font-weight: bold;
+    }
+    .page-links {
+      margin-bottom: 10px; /* Add margin for spacing */
+    }
+    .page-link {
+      margin-right: 5px; /* Add spacing between buttons */
+    }
+    .page-link button {
+      margin-right: 5px; /* Add spacing between buttons */
+    }
+    .page-link button.active {
+      background-color: #007bff; /* Active button color */
+      color: white; /* Active button text color */
+    }
+    .page-link button:hover {
+      background-color: #0056b3; /* Button hover color */
+      color: white; /* Button text color on hover */
+    }
+    #currentPage {
+      margin: 10px 0; /* Add margin for spacing */
+      font-weight: bold; /* Make the page number bold */
+    }
+    /* Table row styling */
+    tr {
+      transition: background-color 0.3s; /* Smooth transition for background color */
+    }
+    /* Light mode styling for rows */
+    .table-container tr {
+      background-color: white; /* Default white for light mode */
+    }
+    /* Dark mode styling for rows */
+    .dark-mode .table-container tr {
+      background-color: #44475a !important; /* Dark background for table rows */
+    }
+    /* Remove Bootstrap default row styling */
+    .table-container tr:nth-child(even),
+    .table-container tr:nth-child(odd) {
+      background-color: inherit; /* Use the inherited background color */
+    }
+    /* Header styling */
+    .dark-mode .table th {
+      background-color: #44475a; /* Header background color */
+      color: #f8f8f2; /* Header text color */
+    }
+    .dark-mode .table td {
+      background-color: #6272a4; /* Row background color */
+      color: #f8f8f2; /* Row text color */
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="text-center">CSV Reader with Pagination</h1>
+
+  <div class="form-group">
+    <label for="csvFile">Upload CSV file:</label>
+    <input type="file" id="csvFile" accept=".csv" class="form-control">
+  </div>
+
+  <button id="toggleMode" class="btn btn-default">Toggle Dark/Light Mode</button>
+
+  <div class="form-group">
+    <label for="searchKeyword">Search:</label>
+    <input type="text" id="searchKeyword" class="form-control" placeholder="Enter keyword">
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading CSV...</p>
+  </div>
+
+  <div class="progress" id="progressBar">
+    <div class="progress-bar" role="progressbar" style="width: 100%;">
+      <span>100%</span>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="table table-bordered table-striped">
+      <thead id="csvHead"></thead>
+      <tbody id="csvBody"></tbody>
+    </table>
+
+    <div id="currentPage">Currently on page: 1</div>
+    <div id="totalRowsMessage"></div>
+    <div class="page-links" id="pageLinks"></div>
+
+    <div class="form-group">
+      <label for="pageNumber">Jump to page:</label>
+      <input type="number" id="pageNumber" class="form-control" min="1">
+      <button id="jumpButton" class="btn btn-primary">Jump</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+<!-- Add the modified JavaScript here -->
+<script>
+  $(document).ready(function() {
+    const rowsPerPage = 50; // Number of rows per page (hardcoded)
+    let totalRows = 0;
+    let currentPage = 1;
+    let csvData = [];
+    let filteredData = []; // To hold filtered data based on search
+
+    $('#csvFile').on('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        $('#loading').show(); // Show loading animation
+        $('#progressBar').show(); // Show progress bar
+        totalRows = 0; // Reset total rows
+        csvData = []; // Reset csvData for new file
+        readCSV(file);
+      }
+    });
+
+    function readCSV(file) {
+      Papa.parse(file, {
+        header: false, // Set header to false for CSV without headers
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          $('#loading').hide(); // Hide loading animation
+          $('#progressBar').hide(); // Hide progress bar
+          csvData = results.data; // Use the parsed data directly
+          totalRows = results.data.length; // Get total rows from results
+          filteredData = csvData; // Initialize filtered data
+          renderTable(1); // Render the first page
+        },
+        error: function(error) {
+          console.error('Error parsing CSV:', error);
+          $('#loading').hide(); // Hide loading animation
+          $('#progressBar').hide(); // Hide progress bar
+        }
+      });
+    }
+
+    // Add event listener for search input
+    $('#searchKeyword').on('input', function() {
+      const keyword = $(this).val().toLowerCase();
+
+      // Filter csvData based on the search keyword
+      filteredData = csvData.filter(row =>
+        row.some(cell => String(cell).toLowerCase().includes(keyword))
+      );
+
+      totalRows = filteredData.length; // Update total rows for filtered data
+      renderTable(1); // Render the first page of the filtered data
+    });
+
+    function renderTable(page) {
+      currentPage = page;
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+
+      // Clear the table
+      $('#csvHead').empty();
+      $('#csvBody').empty();
+
+      // Render table head
+      const headers = Array.from({ length: (filteredData[0] || []).length }, (_, i) => `Column ${i + 1}`); // Generate headers
+      let headHtml = '<tr>';
+      headers.forEach(header => {
+        headHtml += `<th>${header}</th>`;
+      });
+      headHtml += '</tr>';
+      $('#csvHead').append(headHtml);
+
+      // Render table body
+      const rows = filteredData.slice(start, end);
+      rows.forEach(row => {
+        let rowHtml = '<tr>';
+        row.forEach(cell => {
+          rowHtml += `<td>${cell !== undefined ? cell : ''}</td>`;
+        });
+        rowHtml += '</tr>';
+        $('#csvBody').append(rowHtml);
+      });
+
+      // Update current page display
+      $('#currentPage').text(`Currently on page: ${currentPage}`);
+
+      // Update total rows and pages message
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+      $('#totalRowsMessage').text(`Total rows: ${totalRows}, Total pages: ${totalPages}`);
+
+      // Render page links
+      renderPageLinks(totalPages);
+    }
+
+    function renderPageLinks(totalPages) {
+      $('#pageLinks').empty(); // Clear existing links
+      for (let i = 1; i <= Math.min(totalPages, 4); i++) { // Display first 4 pages
+        const activeClass = (i === currentPage) ? 'active' : '';
+        $('#pageLinks').append(`<span class="page-link"><button class="btn btn-default ${activeClass}" data-page="${i}">Page ${i}</button></span>`);
+      }
+      // Add click event for each page link
+      $('.page-link button').on('click', function() {
+        const page = $(this).data('page');
+        renderTable(page);
+      });
+    }
+
+    // Handle jumping to a specific page
+    $('#jumpButton').on('click', function() {
+      const pageNumber = parseInt($('#pageNumber').val(), 10);
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+      if (pageNumber >= 1 && pageNumber <= totalPages) {
+        renderTable(pageNumber);
+      } else {
+        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+      }
+    });
+
+    // Toggle dark/light mode
+    $('#toggleMode').on('click', function() {
+      $('body').toggleClass('dark-mode');
+    });
+  });
+</script>
+
+</body>
+</html>
